@@ -1,0 +1,67 @@
+import pandas as pd
+import dash
+from dash import dash_table
+from dash import html
+import dash_table.FormatTemplate as FormatTemplate
+
+df = pd.read_csv('/content/SampleData.csv')
+df.head()
+
+
+import portpicker
+port = portpicker.pick_unused_port()
+from google.colab import output
+output.serve_kernel_port_as_window(port)
+
+#from gevent.pywsgi import WSGIServer
+#host='localhost'
+#app_server = WSGIServer((host, port), app)
+#app_server.serve_forever()
+
+app = dash.Dash(__name__)
+app.layout = html.Div(
+    [
+     html.H3("Example 2"),
+     dash_table.DataTable(
+         id="table2",
+         columns=[
+              {"name" : "File Number", "id" : "file"},
+              {
+                  "name" : "Work Order #",
+                  "id" : "wo",
+                  "renamable" : False,
+                  "type" : "text"
+              },
+              {
+                  "name" : "Part Number",
+                  "id" : "pn",
+                  "renamable" : False,
+                  "type" : "numeric"
+              },  
+              {
+                  "name" : "Target Used",
+                  "id" : "tgt",
+                  "renamable" : False,
+                  "type" : "numeric"
+              },
+              {
+                  "name" : "Resist",
+                  "id" : "rst",
+                  "renamable" : False,
+                  "type" : "numeric"
+              },
+              {
+                  "name" : "Quantity",
+                  "id" : "qty",
+                  "renamable" : False,
+                  "type" : "numeric"
+              },
+         ],
+         data=df.to_dict("records"),
+         style_table={"height":"200px", "overflowY": "auto"},
+     ),
+    ]
+)
+
+if __name__ == "__main__":
+  app.run_server(debug=True, use_reloader=False)
